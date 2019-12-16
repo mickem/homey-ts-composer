@@ -1,0 +1,2 @@
+#!/usr/bin/env node
+require('./homey-ts-composer.js')
