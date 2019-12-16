@@ -8,6 +8,7 @@ import {
     getNameOrUnknown,
     hasDropdown,
     stripTags,
+    IName,
 } from "./Utils";
 
 /**
@@ -19,7 +20,7 @@ export function processActions(sourceFile: ts.SourceFile): IAction[] {
         if (s.kind === ts.SyntaxKind.InterfaceDeclaration) {
             const cls = s as ts.InterfaceDeclaration;
             const triggers = [];
-            const id = getName(cls.name);
+            const id = getName((cls as any).name);
             for (const c of cls.members) {
                 if (c.kind === ts.SyntaxKind.MethodSignature) {
                     const member = parseMethod((c as any) as IJSDocMethod);
@@ -38,8 +39,10 @@ export function processActions(sourceFile: ts.SourceFile): IAction[] {
     return [];
 }
 
-interface IJSDocMethod extends ts.MethodDeclaration {
-    jsDoc: ts.JSDoc[];
+interface IJSDocMethod {
+    jsDoc: IJSDoc[];
+    name: IName;
+    parameters: IParameter[];
 }
 
 function parseMethod(member: IJSDocMethod): IAction {
@@ -64,17 +67,19 @@ function parseMethod(member: IJSDocMethod): IAction {
     }
 }
 
-function parseArguments(
-    parameter: ts.ParameterDeclaration,
-    jsDoc: ts.JSDoc
-): IToken[] {
+export interface IParameter {
+    name: IName;
+    kind: number;
+    type: {
+        members: IArgumentTypeNode[],
+    }
+}
+export function parseArguments(parameter: IParameter, jsDoc: IJSDoc): IToken[] {
     const baseName = getNameOrUnknown(parameter.name);
     const ret: IToken[] = [];
     try {
-        delete parameter.type.parent;
-        const xx = parameter.type as any;
-        for (const x of xx.members) {
-            ret.push(parseArgument(x, jsDoc));
+        for (const arg of parameter.type.members) {
+            ret.push(parseArgument(arg, jsDoc));
         }
     } catch (error) {
         console.error(
@@ -87,52 +92,82 @@ function parseArguments(
     return ret;
 }
 
-function parseArgument(parameter: ts.TypeLiteralNode, jsDoc: ts.JSDoc): IArgument {
-    const name = getName((parameter as any).name);
-    const type = getArgType((parameter as any).type.kind);
+interface IJSDocTag {
+    name: {
+        right?: IName;
+    }
+    comment?: string;
 
+}
+interface IJSDoc {
+    tags?: IJSDocTag[];
+    comment?: string;
+}
+export function parseDescription(name: string, jsDoc: IJSDoc): string {
     try {
-        let desc = "";
-        try {
-            for (const tag of jsDoc.tags) {
-                if (!(tag as any).name || !(tag as any).name.right) {
-                    console.error(`Failed to parse jsDoc ${name}: `, cleanTsObj(tag));
-                    throw new Error(`Failed to parse jsDoc ${name}`);
-                }
-                if (getName((tag as any).name.right) === name) {
-                    desc = tag.comment;
-                }
+        for (const tag of jsDoc.tags) {
+            if (!tag.name || !tag.name.right) {
+                console.error(`Failed to parse jsDoc of ${name} (missing name.right): `, cleanTsObj(tag));
+                throw new Error(`Failed to parse jsDoc of ${name} (missing name.right)`);
             }
-        } catch (error) {
-            console.error(`Failed to parse jsDoc ${name}: `, error, jsDoc);
-            throw new Error(`Failed to parse jsDoc ${name}: ${error}`);
+            if (getName(tag.name.right) === name) {
+                return tag.comment;
+            }
         }
+    } catch (error) {
+        console.error(`Failed to parse jsDoc ${name}: `, error, jsDoc);
+        throw new Error(`Failed to parse jsDoc ${name}: ${error}`);
+    }
+    console.error(`Failed to find jsdoc tag matching ${name}: `, cleanTsObj(jsDoc));
+    throw new Error(`Failed to find jsdoc tag matching ${name}`);
+}
+function makeDropDown(name: string, desc: string): IArgument {
+    const values = getDropdown(desc);
+    return {
+        name,
+        title: {
+            en: stripTags(desc)
+        },
+        type: "dropdown",
+        values: Object.keys(values).map((k: string) => ({ id: k, label: { en: values[k] } })),
+    };
+}
+function makeString(name: string, type: string, desc: string) {
+    return {
+        name,
+        title: {
+            en: desc
+        },
+        type
+    };
+}
+interface IArgumentTypeNode {
+    name: {
+        escapedText: string;
+    };
+    type: {
+        kind: number;
+    }
+}
+export function parseArgument(parameter: IArgumentTypeNode, jsDoc: IJSDoc): IArgument {
+    const name = getName(parameter.name);
+    if (!parameter.type || !parameter.type.kind) {
+        throw new Error(`Missing type in: ${name}`);
+    }
+    const type = getArgType(parameter.type ? parameter.type.kind : -1);
+    try {
+        const desc = parseDescription(name, jsDoc);
         if (hasDropdown(desc)) {
-            const values = getDropdown(desc);
-            return {
-                name,
-                title: {
-                    en: stripTags(desc)
-                },
-                type: "dropdown",
-                values: Object.keys(values).map((k: string) => ({ id: k, label: { en: values[k] } })),
-            };
+            return makeDropDown(name, desc);
         }
-
-        return {
-            name,
-            title: {
-                en: stripTags(desc)
-            },
-            type
-        };
+        return makeString(name, type, stripTags(desc));
     } catch (error) {
         console.error(`Failed to parse ${name}: `, error, cleanTsObj(parameter));
         throw new Error(`Failed to parse ${name}: ${error}`);
     }
 }
 
-function getArgType(kind: number) {
+export function getArgType(kind: number) {
     if (kind === ts.SyntaxKind.StringKeyword) {
         return "text";
     }
