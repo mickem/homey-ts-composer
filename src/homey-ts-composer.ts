@@ -144,11 +144,17 @@ function addAllLanguages(result, locale) {
             );
             return;
           }
-          if (localData.flows.triggers[trigger.id][token.name].title && token.title) {
+          if (
+            localData.flows.triggers[trigger.id][token.name].title &&
+            token.title
+          ) {
             token.title[code] =
               localData.flows.triggers[trigger.id][token.name].title;
           }
-          if (localData.flows.triggers[trigger.id][token.name].example && token.example) {
+          if (
+            localData.flows.triggers[trigger.id][token.name].example &&
+            token.example
+          ) {
             token.example[code] =
               localData.flows.triggers[trigger.id][token.name].example;
           }
