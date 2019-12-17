@@ -1,27 +1,30 @@
 import * as ts from "typescript";
 import { IToken, ITrigger } from "./Model";
 import {
+  cleanTsObj,
   fetchDescriptionFromComment,
   getExample,
   getName,
+  getNameOrUnknown,
+  IName,
   stripTags
 } from "./Utils";
 
 export function processTriggers(sourceFile: ts.SourceFile): ITrigger[] {
   for (const s of sourceFile.statements) {
-    if (s.kind === ts.SyntaxKind.ClassDeclaration) {
-      const cls = s as ts.ClassDeclaration;
+    if (s.kind === ts.SyntaxKind.InterfaceDeclaration) {
+      const cls = s as ts.InterfaceDeclaration;
       const triggers = [];
       const id = getName(cls.name);
       for (const c of cls.members) {
-        if (c.kind === ts.SyntaxKind.MethodDeclaration) {
-          const member = parseMember(c as ts.MethodDeclaration);
+        if (c.kind === ts.SyntaxKind.MethodSignature) {
+          const member = parseMember((c as any) as IJSDocMethod);
           if (member) {
             triggers.push(member);
           }
         }
       }
-      console.log(`Found ${triggers.length} in class ${id}`);
+      console.log(`Found ${triggers.length} in interface ${id}`);
       if (triggers.length > 0) {
         return triggers;
       }
@@ -31,17 +34,28 @@ export function processTriggers(sourceFile: ts.SourceFile): ITrigger[] {
   return [];
 }
 
-function parseMember(member: ts.MethodDeclaration): ITrigger {
+interface IJSDocTag {
+  name: {
+    right?: IName;
+  };
+  comment?: string;
+}
+interface IJSDoc {
+  tags?: IJSDocTag[];
+  comment?: string;
+}
+interface IJSDocMethod {
+  jsDoc: IJSDoc[];
+  name: IName;
+  parameters: IParameter[];
+}
+
+function parseMember(member: IJSDocMethod): ITrigger {
   try {
-    if (!getName(member.name).startsWith("on")) {
-      return;
-    }
-    const functionComment = member
-      .getFullText()
-      .substring(0, member.getStart() - member.getFullStart())
-      .trim();
+    const jsDoc = member.jsDoc[0];
+    const functionComment = jsDoc.comment;
     const result: ITrigger = {
-      id: getName(member.name).substring(2),
+      id: getName(member.name),
       title: {
         en: fetchDescriptionFromComment(functionComment)
       },
@@ -49,9 +63,7 @@ function parseMember(member: ts.MethodDeclaration): ITrigger {
     };
     for (const p of member.parameters) {
       if (p.kind === ts.SyntaxKind.Parameter) {
-        result.tokens.push(
-          parseParameter(p as ts.ParameterDeclaration, functionComment)
-        );
+        result.tokens = parseArguments(p, jsDoc);
       }
     }
     return result;
@@ -60,34 +72,88 @@ function parseMember(member: ts.MethodDeclaration): ITrigger {
   }
 }
 
-function parseParameter(
-  parameter: ts.ParameterDeclaration,
-  functionComment: string
-): IToken {
-  const name = getName(parameter.name);
+export interface IParameter {
+  name: IName;
+  kind: number;
+  type: {
+    members: IArgumentTypeNode[];
+  };
+}
+export function parseArguments(parameter: IParameter, jsDoc: IJSDoc): IToken[] {
+  const baseName = getNameOrUnknown(parameter.name);
+  const ret: IToken[] = [];
   try {
-    const key = `@param ${name}`;
-    const pos = functionComment.indexOf(key);
-    let title = "";
-    if (pos !== -1) {
-      const pos2 = functionComment.indexOf("\n", pos);
-      if (pos2 !== -1) {
-        title = functionComment.substring(pos + key.length, pos2).trim();
+    for (const arg of parameter.type.members) {
+      ret.push(parseArgument(arg, jsDoc));
+    }
+  } catch (error) {
+    console.error(
+      `Failed to parse ${baseName}: `,
+      error,
+      cleanTsObj(parameter)
+    );
+    throw new Error(`Failed to parse ${baseName}: ${error}`);
+  }
+  return ret;
+}
+
+export function parseDescription(name: string, jsDoc: IJSDoc): string {
+  try {
+    for (const tag of jsDoc.tags) {
+      if (!tag.name || !tag.name.right) {
+        console.error(
+          `Failed to parse jsDoc of ${name} (missing name.right): `,
+          cleanTsObj(tag)
+        );
+        throw new Error(
+          `Failed to parse jsDoc of ${name} (missing name.right)`
+        );
+      }
+      if (getName(tag.name.right) === name) {
+        return tag.comment;
       }
     }
-    const type = getParamType(parameter.type.kind);
-    if (type === "unknown") {
-      console.log(parameter.type);
-    }
-    return {
-      example: getExample(title, type),
-      name,
-      title: {
-        en: stripTags(title)
-      },
-      type
-    };
   } catch (error) {
+    console.error(`Failed to parse jsDoc ${name}: `, error, jsDoc);
+    throw new Error(`Failed to parse jsDoc ${name}: ${error}`);
+  }
+  console.error(
+    `Failed to find jsdoc tag matching ${name}: `,
+    cleanTsObj(jsDoc)
+  );
+  throw new Error(`Failed to find jsdoc tag matching ${name}`);
+}
+function makeString(name: string, type: string, desc: string) {
+  return {
+    name,
+    title: {
+      en: desc
+    },
+    type
+  };
+}
+interface IArgumentTypeNode {
+  name: {
+    escapedText: string;
+  };
+  type: {
+    kind: number;
+  };
+}
+export function parseArgument(
+  parameter: IArgumentTypeNode,
+  jsDoc: IJSDoc
+): IToken {
+  const name = getName(parameter.name);
+  if (!parameter.type || !parameter.type.kind) {
+    throw new Error(`Missing type in: ${name}`);
+  }
+  const type = getParamType(parameter.type ? parameter.type.kind : -1);
+  try {
+    const desc = parseDescription(name, jsDoc);
+    return makeString(name, type, stripTags(desc));
+  } catch (error) {
+    console.error(`Failed to parse ${name}: `, error, cleanTsObj(parameter));
     throw new Error(`Failed to parse ${name}: ${error}`);
   }
 }
