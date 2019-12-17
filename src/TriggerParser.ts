@@ -1,5 +1,5 @@
 import * as ts from "typescript";
-import { IToken, ITrigger } from "./Model";
+import { IToken, ITrigger, ILString } from "./Model";
 import {
   cleanTsObj,
   fetchDescriptionFromComment,
@@ -123,8 +123,24 @@ export function parseDescription(name: string, jsDoc: IJSDoc): string {
   );
   throw new Error(`Failed to find jsdoc tag matching ${name}`);
 }
-function makeString(name: string, type: string, desc: string) {
+function makeString(
+  name: string,
+  type: string,
+  desc: string,
+  example: ILString
+) {
   return {
+    example,
+    name,
+    title: {
+      en: desc
+    },
+    type
+  };
+}
+function makeNumber(name: string, type: string, desc: string, example: number) {
+  return {
+    example,
     name,
     title: {
       en: desc
@@ -151,7 +167,12 @@ export function parseArgument(
   const type = getParamType(parameter.type ? parameter.type.kind : -1);
   try {
     const desc = parseDescription(name, jsDoc);
-    return makeString(name, type, stripTags(desc));
+    const example = getExample(desc, type);
+    if (type === "string") {
+      return makeString(name, type, stripTags(desc), example as ILString);
+    } else {
+      return makeNumber(name, type, stripTags(desc), example as number);
+    }
   } catch (error) {
     console.error(`Failed to parse ${name}: `, error, cleanTsObj(parameter));
     throw new Error(`Failed to parse ${name}: ${error}`);

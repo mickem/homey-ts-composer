@@ -48,6 +48,7 @@ describe("full example", () => {
         },
         tokens: [
           {
+            example: { en: "Kitchen" },
             name: "zone",
             title: {
               en: "zone"
@@ -55,6 +56,7 @@ describe("full example", () => {
             type: "string"
           },
           {
+            example: 14.5,
             name: "temperature",
             title: {
               en: "average temperature"
@@ -70,6 +72,9 @@ describe("full example", () => {
         },
         tokens: [
           {
+            example: {
+              en: "Kitchen"
+            },
             name: "zone",
             title: {
               en: "zone"
@@ -77,6 +82,9 @@ describe("full example", () => {
             type: "string"
           },
           {
+            example: {
+              en: "Wall thermometer"
+            },
             name: "device",
             title: {
               en: "Thermometer"
@@ -84,6 +92,7 @@ describe("full example", () => {
             type: "string"
           },
           {
+            example: 14.5,
             name: "temperature",
             title: {
               en: "maximum temperature"
@@ -99,6 +108,9 @@ describe("full example", () => {
         },
         tokens: [
           {
+            example: {
+              en: "Kitchen"
+            },
             name: "zone",
             title: {
               en: "zone"
@@ -106,6 +118,9 @@ describe("full example", () => {
             type: "string"
           },
           {
+            example: {
+              en: "Wall thermometer"
+            },
             name: "device",
             title: {
               en: "Thermometer"
@@ -113,6 +128,7 @@ describe("full example", () => {
             type: "string"
           },
           {
+            example: 14.5,
             name: "temperature",
             title: {
               en: "minimum temperature"
@@ -128,6 +144,9 @@ describe("full example", () => {
         },
         tokens: [
           {
+            example: {
+              en: "Kitchen"
+            },
             name: "zone",
             title: {
               en: "zone"
@@ -135,6 +154,7 @@ describe("full example", () => {
             type: "string"
           },
           {
+            example: 14.5,
             name: "temperature",
             title: {
               en: "temperature"
@@ -150,6 +170,9 @@ describe("full example", () => {
         },
         tokens: [
           {
+            example: {
+              en: "Kitchen"
+            },
             name: "zone",
             title: {
               en: "zone"
@@ -157,6 +180,7 @@ describe("full example", () => {
             type: "string"
           },
           {
+            example: 14.5,
             name: "temperature",
             title: {
               en: "temperature"
