@@ -1,5 +1,5 @@
 import * as ts from "typescript";
-import { IToken, ITrigger, ILString } from "./Model";
+import { ILString, IToken, ITrigger } from "./Model";
 import {
   cleanTsObj,
   fetchDescriptionFromComment,
