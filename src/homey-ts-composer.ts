@@ -45,7 +45,11 @@ function readAllDrivers(drivers: string): IDriver[] {
     const baseline = readComposer(`${drivers}/${file}/driver.compose.json`);
     if (existsSync(`${drivers}/${file}/DriverImpl.ts`)) {
       ret.push(
-        processDriver(file, readFile(`${drivers}/${file}/DriverImpl.ts`), baseline)
+        processDriver(
+          file,
+          readFile(`${drivers}/${file}/DriverImpl.ts`),
+          baseline
+        )
       );
     } else if (existsSync(`${drivers}/${file}/driver.ts`)) {
       ret.push(
@@ -227,7 +231,7 @@ const args = yargs
   .command(
     "show",
     "Show the configuration",
-    () => { },
+    () => {},
     (argv: any) => {
       const result = readAll(
         argv.packageFile,
@@ -242,7 +246,7 @@ const args = yargs
   .command(
     "generate",
     "Update the app.json file",
-    () => { },
+    () => {},
     (argv: any) => {
       const result = readAll(
         argv.packageFile,
