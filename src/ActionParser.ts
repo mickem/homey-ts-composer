@@ -1,4 +1,5 @@
 import * as ts from "typescript";
+import { IJSDoc } from "./JSDocParser";
 import { IAction, IArgument, IToken } from "./Model";
 import {
   cleanTsObj,
@@ -10,7 +11,6 @@ import {
   IName,
   stripTags
 } from "./Utils";
-import { IJSDoc } from "./JSDocParser";
 
 /**
  * Parse all actions from an interface in a .ts source file
