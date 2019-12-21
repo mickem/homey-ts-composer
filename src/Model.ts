@@ -4,8 +4,36 @@ export interface IApp {
   bugs: any;
   author: any;
   flow: IFlows;
+  drivers: IDriver[];
 }
 
+export interface IDriver {
+  id: string;
+  images: {
+    large: string;
+    small: string;
+  };
+  name: ILString;
+  class: string;
+  capabilities: string[];
+  capabilitiesOptions?: ICapabilitiesOptions;
+  pair?: IPair[];
+}
+
+export interface IPair {
+  id: string;
+  template: string;
+  navigation?: {
+    next: string;
+  };
+}
+
+export interface ICapabilitiesOptions {
+  [key: string]: ICapabilitiesOption;
+}
+export interface ICapabilitiesOption {
+  title: ILString;
+}
 export interface IFlows {
   triggers?: ITrigger[];
   actions?: IAction[];

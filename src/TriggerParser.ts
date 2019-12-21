@@ -9,6 +9,7 @@ import {
   IName,
   stripTags
 } from "./Utils";
+import { IJSDoc } from "./JSDocParser";
 
 export function processTriggers(sourceFile: ts.SourceFile): ITrigger[] {
   for (const s of sourceFile.statements) {
@@ -34,16 +35,6 @@ export function processTriggers(sourceFile: ts.SourceFile): ITrigger[] {
   return [];
 }
 
-interface IJSDocTag {
-  name: {
-    right?: IName;
-  };
-  comment?: string;
-}
-interface IJSDoc {
-  tags?: IJSDocTag[];
-  comment?: string;
-}
 interface IJSDocMethod {
   jsDoc: IJSDoc[];
   name: IName;

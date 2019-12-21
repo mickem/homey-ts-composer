@@ -2,8 +2,9 @@ import { readdirSync, readFileSync, writeFileSync } from "fs";
 import * as ts from "typescript";
 import * as yargs from "yargs";
 import { processActions } from "./ActionParser";
-import { IApp } from "./Model";
+import { IApp, IDriver } from "./Model";
 import { processTriggers } from "./TriggerParser";
+import { processDriver } from "./DriverParser";
 
 function readFile(fileName: string) {
   try {
@@ -26,12 +27,30 @@ function readJsonFile(fileName: string) {
     throw new Error(`Failed to parse ${fileName}: ${error}`);
   }
 }
+function readComposer(fileName: string) {
+  try {
+    return JSON.parse(readFileSync(fileName).toString());
+  } catch (error) {
+    console.error(`Failed to parse ${fileName}: ${error}`);
+    return {};
+  }
+}
 
+function readAllDrivers(drivers: string): IDriver[] {
+  const ret: IDriver[] = [];
+  for (const file of readdirSync(drivers)) {
+    console.log(`Adding drivers from ${drivers}/${file}`);
+    const baseline = readComposer(`${drivers}/${file}/driver.compose.json`)
+    ret.push(processDriver(file, readFile(`${drivers}/${file}/driver.ts`), baseline));
+  }
+  return ret;
+}
 function readAll(
   packageFile: string,
   appFile: string,
   triggerFile: string,
-  actionFile: string
+  actionFile: string,
+  drivers: string
 ): IApp {
   const pkg = readJsonFile(packageFile);
   const baseline = readJsonFile(appFile) as IApp;
@@ -55,6 +74,7 @@ function readAll(
     }
     baseline.flow.actions = processActions(readFile(actionFile));
   }
+  baseline.drivers = readAllDrivers(drivers);
   return baseline;
 }
 function generate(targetFile: string, data: any) {
@@ -182,22 +202,29 @@ const args = yargs
     description: "The source app.json file to import baseline from"
   })
   .option("trigger-file", {
+    default:"triggers.ts",
     description: "The typescript file to read triggers from"
   })
   .option("action-file", {
+    default:"actions.ts",
     description: "The typescript file to read actions from"
+  })
+  .option("drivers", {
+    default:"drivers",
+    description: "The folder to read drivers from",
   })
   .option("locales", { description: "The folder to read locales from" })
   .command(
     "show",
     "Show the configuration",
-    () => {},
+    () => { },
     (argv: any) => {
       const result = readAll(
         argv.packageFile,
         argv.appFile,
         argv.triggerFile,
-        argv.actionFile
+        argv.actionFile,
+        argv.drivers
       );
       console.log(formatResult(result, argv.minify));
     }
@@ -205,13 +232,14 @@ const args = yargs
   .command(
     "generate",
     "Update the app.json file",
-    () => {},
+    () => { },
     (argv: any) => {
       const result = readAll(
         argv.packageFile,
         argv.appFile,
         argv.triggerFile,
-        argv.actionFile
+        argv.actionFile,
+        argv.drivers
       );
       updateLocales(result, argv.locales + "/en.json");
       const lResult = addAllLanguages(result, argv.locales);

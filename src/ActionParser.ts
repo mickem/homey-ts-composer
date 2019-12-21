@@ -10,6 +10,7 @@ import {
   IName,
   stripTags
 } from "./Utils";
+import { IJSDoc } from "./JSDocParser";
 
 /**
  * Parse all actions from an interface in a .ts source file
@@ -39,22 +40,6 @@ export function processActions(sourceFile: ts.SourceFile): IAction[] {
   return [];
 }
 
-interface IJSDocTag {
-  name: {
-    right?: IName;
-  };
-  comment?: string;
-}
-interface IJSDoc {
-  tags?: IJSDocTag[];
-  comment?: string;
-}
-interface IJSDocMethod {
-  jsDoc: IJSDoc[];
-  name: IName;
-  parameters: IParameter[];
-}
-
 function parseMethod(member: IJSDocMethod): IAction {
   try {
     const jsDoc = member.jsDoc[0];
@@ -77,6 +62,11 @@ function parseMethod(member: IJSDocMethod): IAction {
   }
 }
 
+interface IJSDocMethod {
+  jsDoc: IJSDoc[];
+  name: IName;
+  parameters: IParameter[];
+}
 export interface IParameter {
   name: IName;
   kind: number;

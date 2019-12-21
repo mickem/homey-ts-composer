@@ -3,6 +3,7 @@ import { ILString } from "./Model";
 
 const EXAMPLE_TAG = "#sample:";
 const DROPDOWN_TAG = "#dropdown:";
+const CLASS_TAG = "#class:";
 
 export interface IName {
   escapedText?: string;
@@ -84,6 +85,9 @@ function parseJsonOrThrow(str: string) {
 export function getDropdown(text: string): IDropdown {
   return parseJsonOrThrow(getTagText(DROPDOWN_TAG, text)) as IDropdown;
 }
+export function getClassTag(text: string): string {
+  return getTagText(CLASS_TAG, text);
+}
 
 function findFirst(text: string, keys: string[]): number {
   let firstPos = -1;
@@ -101,7 +105,7 @@ function findFirst(text: string, keys: string[]): number {
 }
 
 export function stripTags(text: string): string {
-  const pos = findFirst(text, [EXAMPLE_TAG, DROPDOWN_TAG]);
+  const pos = findFirst(text, [EXAMPLE_TAG, DROPDOWN_TAG, CLASS_TAG]);
   if (pos === -1) {
     return text;
   }
