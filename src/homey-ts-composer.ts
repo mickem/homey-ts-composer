@@ -40,8 +40,10 @@ function readAllDrivers(drivers: string): IDriver[] {
   const ret: IDriver[] = [];
   for (const file of readdirSync(drivers)) {
     console.log(`Adding drivers from ${drivers}/${file}`);
-    const baseline = readComposer(`${drivers}/${file}/driver.compose.json`)
-    ret.push(processDriver(file, readFile(`${drivers}/${file}/driver.ts`), baseline));
+    const baseline = readComposer(`${drivers}/${file}/driver.compose.json`);
+    ret.push(
+      processDriver(file, readFile(`${drivers}/${file}/driver.ts`), baseline)
+    );
   }
   return ret;
 }
@@ -202,22 +204,22 @@ const args = yargs
     description: "The source app.json file to import baseline from"
   })
   .option("trigger-file", {
-    default:"triggers.ts",
+    default: "triggers.ts",
     description: "The typescript file to read triggers from"
   })
   .option("action-file", {
-    default:"actions.ts",
+    default: "actions.ts",
     description: "The typescript file to read actions from"
   })
   .option("drivers", {
-    default:"drivers",
-    description: "The folder to read drivers from",
+    default: "drivers",
+    description: "The folder to read drivers from"
   })
   .option("locales", { description: "The folder to read locales from" })
   .command(
     "show",
     "Show the configuration",
-    () => { },
+    () => {},
     (argv: any) => {
       const result = readAll(
         argv.packageFile,
@@ -232,7 +234,7 @@ const args = yargs
   .command(
     "generate",
     "Update the app.json file",
-    () => { },
+    () => {},
     (argv: any) => {
       const result = readAll(
         argv.packageFile,

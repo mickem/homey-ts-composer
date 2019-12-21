@@ -29,7 +29,7 @@ class ZoneTemperatureDriver extends Driver {
             navigation: {
               next: "add_my_devices"
             },
-            template: "list_devices",
+            template: "list_devices"
           },
           {
             id: "add_my_devices",

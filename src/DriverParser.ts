@@ -34,7 +34,9 @@ export function processDriver(
                 if (!ret.capabilitiesOptions) {
                   ret.capabilitiesOptions = {};
                 }
-                ret.capabilitiesOptions[capability] = { title: { en: jsDoc.comment } };
+                ret.capabilitiesOptions[capability] = {
+                  title: { en: jsDoc.comment }
+                };
               }
             }
           }
