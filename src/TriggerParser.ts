@@ -1,4 +1,5 @@
 import * as ts from "typescript";
+import { IJSDoc } from "./JSDocParser";
 import { ILString, IToken, ITrigger } from "./Model";
 import {
   cleanTsObj,
@@ -9,7 +10,6 @@ import {
   IName,
   stripTags
 } from "./Utils";
-import { IJSDoc } from "./JSDocParser";
 
 export function processTriggers(sourceFile: ts.SourceFile): ITrigger[] {
   for (const s of sourceFile.statements) {

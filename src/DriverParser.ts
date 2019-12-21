@@ -1,7 +1,7 @@
 import * as ts from "typescript";
-import { IDriver, ILString } from "./Model";
+import { getFirstJSDoc, hasJSDoc } from "./JSDocParser";
+import { IDriver } from "./Model";
 import { getClassTag, getName, stripTags } from "./Utils";
-import { hasJSDoc, getFirstJSDoc } from "./JSDocParser";
 
 /**
  * Parse all actions from an interface in a .ts source file

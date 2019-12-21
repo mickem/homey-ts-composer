@@ -2,9 +2,9 @@ import { readdirSync, readFileSync, writeFileSync } from "fs";
 import * as ts from "typescript";
 import * as yargs from "yargs";
 import { processActions } from "./ActionParser";
+import { processDriver } from "./DriverParser";
 import { IApp, IDriver } from "./Model";
 import { processTriggers } from "./TriggerParser";
-import { processDriver } from "./DriverParser";
 
 function readFile(fileName: string) {
   try {

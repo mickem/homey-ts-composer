@@ -1,6 +1,6 @@
 import { processDriver } from "../DriverParser";
-import { parseCode } from "../Utils";
 import { IDriver } from "../Model";
+import { parseCode } from "../Utils";
 
 describe("full example", () => {
   const code = `
@@ -26,10 +26,10 @@ class ZoneTemperatureDriver extends Driver {
         pair: [
           {
             id: "list_devices",
-            template: "list_devices",
             navigation: {
               next: "add_my_devices"
-            }
+            },
+            template: "list_devices",
           },
           {
             id: "add_my_devices",
