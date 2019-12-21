@@ -1,4 +1,4 @@
-import { readdirSync, readFileSync, writeFileSync } from "fs";
+import { existsSync, readdirSync, readFileSync, writeFileSync } from "fs";
 import * as ts from "typescript";
 import * as yargs from "yargs";
 import { processActions } from "./ActionParser";
@@ -29,11 +29,13 @@ function readJsonFile(fileName: string) {
 }
 function readComposer(fileName: string) {
   try {
-    return JSON.parse(readFileSync(fileName).toString());
+    if (existsSync(fileName)) {
+      return JSON.parse(readFileSync(fileName).toString());
+    }
   } catch (error) {
     console.error(`Failed to parse ${fileName}: ${error}`);
-    return {};
   }
+  return {};
 }
 
 function readAllDrivers(drivers: string): IDriver[] {
@@ -41,9 +43,15 @@ function readAllDrivers(drivers: string): IDriver[] {
   for (const file of readdirSync(drivers)) {
     console.log(`Adding drivers from ${drivers}/${file}`);
     const baseline = readComposer(`${drivers}/${file}/driver.compose.json`);
-    ret.push(
-      processDriver(file, readFile(`${drivers}/${file}/driver.ts`), baseline)
-    );
+    if (existsSync(`${drivers}/${file}/DriverImpl.ts`)) {
+      ret.push(
+        processDriver(file, readFile(`${drivers}/${file}/DriverImpl.ts`), baseline)
+      );
+    } else if (existsSync(`${drivers}/${file}/driver.ts`)) {
+      ret.push(
+        processDriver(file, readFile(`${drivers}/${file}/driver.ts`), baseline)
+      );
+    }
   }
   return ret;
 }
@@ -219,7 +227,7 @@ const args = yargs
   .command(
     "show",
     "Show the configuration",
-    () => {},
+    () => { },
     (argv: any) => {
       const result = readAll(
         argv.packageFile,
@@ -234,7 +242,7 @@ const args = yargs
   .command(
     "generate",
     "Update the app.json file",
-    () => {},
+    () => { },
     (argv: any) => {
       const result = readAll(
         argv.packageFile,
