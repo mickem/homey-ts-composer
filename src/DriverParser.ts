@@ -58,8 +58,8 @@ export function processDriver(
   console.log(`Found driver ${folder}`);
   if (!ret.images) {
     ret.images = {
-      large: `/drivers/${folder}/assets/images/large.png`,
-      small: `/drivers/${folder}/assets/images/small.png`
+      large: `/assets/drivers/${folder}/large.png`,
+      small: `/assets/drivers/${folder}/small.png`
     };
   }
   if (!ret.id) {
