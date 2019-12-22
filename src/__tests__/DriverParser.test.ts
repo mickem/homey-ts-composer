@@ -49,8 +49,8 @@ class ZoneTemperatureDriver extends Driver {
       class: "sensor",
       id: "zone-temperature",
       images: {
-        large: "/drivers/zone-temperature/assets/images/large.png",
-        small: "/drivers/zone-temperature/assets/images/small.png"
+        large: "/assets/drivers/zone-temperature/large.png",
+        small: "/assets/drivers/zone-temperature/small.png"
       },
       name: {
         en: "Zone Temperature"
