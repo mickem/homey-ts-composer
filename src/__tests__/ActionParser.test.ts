@@ -39,7 +39,11 @@ describe("full example", () => {
               { id: "max", label: { en: "Maximum" } }
             ]
           },
-          { name: "temperature", title: { en: "$common.temperature" }, type: "number" }
+          {
+            name: "temperature",
+            title: { en: "$common.temperature" },
+            type: "number"
+          }
         ],
         id: "SetTemperatureBounds",
         title: { en: "Set the maximum or minimum temperature bounds" }

@@ -11,7 +11,7 @@ import {
   hasDropdown,
   hasExample,
   IName,
-  stripTags,
+  stripTags
 } from "./Utils";
 
 /**
@@ -134,7 +134,12 @@ function makeDropDown(name: string, desc: string): IArgument {
     }))
   };
 }
-function makeString(name: string, type: string, desc: string, example: number | ILString | undefined): IArgument {
+function makeString(
+  name: string,
+  type: string,
+  desc: string,
+  example: number | ILString | undefined
+): IArgument {
   const ret: IArgument = {
     name,
     title: {

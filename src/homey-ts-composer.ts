@@ -109,17 +109,23 @@ function updateEnLocale(result: IApp, locale) {
 }
 
 function addAllLanguages(result: IApp, localePath) {
-  for (const file of readdirSync(localePath).filter(f => !f.endsWith('en.json'))) {
+  for (const file of readdirSync(localePath).filter(
+    f => !f.endsWith("en.json")
+  )) {
     console.log(`Adding strings from ${file}`);
     const code = file
       .split(".")
       .slice(0, -1)
       .join(".");
-    const localData = JSON.parse(readFileSync(`${localePath}/${file}`).toString());
+    const localData = JSON.parse(
+      readFileSync(`${localePath}/${file}`).toString()
+    );
     addLocaleToResult(code, result, localData);
   }
-  const enLocalData = JSON.parse(readFileSync(`${localePath}/en.json`).toString());
-  addLocaleToResult('en', result, enLocalData);
+  const enLocalData = JSON.parse(
+    readFileSync(`${localePath}/en.json`).toString()
+  );
+  addLocaleToResult("en", result, enLocalData);
   return result;
 }
 
@@ -153,7 +159,7 @@ const args = yargs
   .command(
     "show",
     "Show the configuration",
-    () => { },
+    () => {},
     (argv: any) => {
       const result = readAll(
         argv.packageFile,
@@ -168,7 +174,7 @@ const args = yargs
   .command(
     "generate",
     "Update the app.json file",
-    () => { },
+    () => {},
     (argv: any) => {
       const result = readAll(
         argv.packageFile,
