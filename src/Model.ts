@@ -1,10 +1,10 @@
 export interface IApp {
-  id: string;
-  version: string;
-  bugs: any;
-  author: any;
-  flow: IFlows;
-  drivers: IDriver[];
+  id?: string;
+  version?: string;
+  bugs?: any;
+  author?: any;
+  flow?: IFlows;
+  drivers?: IDriver[];
 }
 
 export interface IDriver {

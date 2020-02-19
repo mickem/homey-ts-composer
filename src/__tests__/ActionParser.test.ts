@@ -15,12 +15,12 @@ describe("full example", () => {
         /**
          * Set the maximum or minimum temperature bounds
          * @param args.type the type of bound to set #dropdown:{"min":"Minimum", "max":"Maximum"}
-         * @param args.temperature temperature
+         * @param args.temperature $common.temperature
          */
         SetTemperatureBounds(args: { type: string; temperature: number }): boolean;
         /**
          * Set the mode for a given zone
-         * @param args.zone zone
+         * @param args.zone $common.zone
          * @param args.mode mode #dropdown:{"disabled":"Disabled", "enabled":"Enabled", "monitored":"Monitored"}
          */
         SetZoneMode(args: { zone: string; mode: string }): boolean;
@@ -39,14 +39,14 @@ describe("full example", () => {
               { id: "max", label: { en: "Maximum" } }
             ]
           },
-          { name: "temperature", title: { en: "temperature" }, type: "number" }
+          { name: "temperature", title: { en: "$common.temperature" }, type: "number" }
         ],
         id: "SetTemperatureBounds",
         title: { en: "Set the maximum or minimum temperature bounds" }
       },
       {
         args: [
-          { name: "zone", title: { en: "zone" }, type: "text" },
+          { name: "zone", title: { en: "$common.zone" }, type: "text" },
           {
             name: "mode",
             title: { en: "mode" },

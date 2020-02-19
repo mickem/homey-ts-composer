@@ -3,6 +3,7 @@ import * as ts from "typescript";
 import * as yargs from "yargs";
 import { processActions } from "./ActionParser";
 import { processDriver } from "./DriverParser";
+import { addLocaleToResult, updateBaseLocale } from "./Internationalization";
 import { IApp, IDriver } from "./Model";
 import { processTriggers } from "./TriggerParser";
 
@@ -101,103 +102,24 @@ function formatResult(data: any, minify: boolean) {
   return JSON.stringify(data, null, 2);
 }
 
-interface IExampleNode {
-  example: {
-    en: string;
-  };
-}
-function fetchExample(node: IExampleNode): string {
-  try {
-    if (node && node.example.en) {
-      return node.example.en;
-    }
-    return "TODO: Add example";
-  } catch (error) {
-    console.log(`Failed to parse example: `, node);
-    return "TODO: Add example";
-  }
-}
-
-function updateLocales(result, locale) {
-  const localData = JSON.parse(readFileSync(locale).toString());
-  const triggerData = {};
-  for (const t of result.flow.triggers) {
-    triggerData[t.id] = {
-      title: t.title.en
-    };
-    for (const token of t.tokens) {
-      triggerData[t.id][token.name] = {
-        title: token.title.en
-      };
-      if (token.type === "string") {
-        triggerData[t.id][token.name].example = fetchExample(token);
-      }
-    }
-  }
-  const actionData = {};
-  for (const t of result.flow.actions) {
-    actionData[t.id] = {
-      title: t.title.en
-    };
-    for (const arg of t.args) {
-      actionData[t.id][arg.name] = {
-        title: arg.title.en
-      };
-      if (arg.type === "text") {
-        actionData[t.id][arg.name].example = fetchExample(arg);
-      }
-    }
-  }
-  if (!localData.flows) {
-    localData.flows = {};
-  }
-  localData.flows.triggers = triggerData;
-  localData.flows.actions = actionData;
+function updateEnLocale(result: IApp, locale) {
+  const baseLocale = JSON.parse(readFileSync(locale).toString());
+  const localData = updateBaseLocale(result, baseLocale);
   writeFileSync(locale, JSON.stringify(localData, null, 2));
 }
 
-function addAllLanguages(result, locale) {
-  for (const file of readdirSync(locale)) {
+function addAllLanguages(result: IApp, localePath) {
+  for (const file of readdirSync(localePath).filter(f => !f.endsWith('en.json'))) {
     console.log(`Adding strings from ${file}`);
     const code = file
       .split(".")
       .slice(0, -1)
       .join(".");
-    const localData = JSON.parse(readFileSync(`${locale}/${file}`).toString());
-    if (!localData.flows) {
-      return result;
-    }
-    if (localData.flows.triggers) {
-      result.flow.triggers = result.flow.triggers.map(trigger => {
-        trigger.title[code] = localData.flows.triggers[trigger.id].title;
-        trigger.tokens.map(token => {
-          if (!localData.flows.triggers[trigger.id][token.name]) {
-            console.log(localData.flows.triggers[trigger.id]);
-            console.error(
-              `Ignoring missing transalation ${code} ${trigger.id} / ${token.name}`
-            );
-            return;
-          }
-          if (
-            localData.flows.triggers[trigger.id][token.name].title &&
-            token.title
-          ) {
-            token.title[code] =
-              localData.flows.triggers[trigger.id][token.name].title;
-          }
-          if (
-            localData.flows.triggers[trigger.id][token.name].example &&
-            token.example
-          ) {
-            token.example[code] =
-              localData.flows.triggers[trigger.id][token.name].example;
-          }
-          return token;
-        });
-        return trigger;
-      });
-    }
+    const localData = JSON.parse(readFileSync(`${localePath}/${file}`).toString());
+    addLocaleToResult(code, result, localData);
   }
+  const enLocalData = JSON.parse(readFileSync(`${localePath}/en.json`).toString());
+  addLocaleToResult('en', result, enLocalData);
   return result;
 }
 
@@ -231,7 +153,7 @@ const args = yargs
   .command(
     "show",
     "Show the configuration",
-    () => {},
+    () => { },
     (argv: any) => {
       const result = readAll(
         argv.packageFile,
@@ -246,7 +168,7 @@ const args = yargs
   .command(
     "generate",
     "Update the app.json file",
-    () => {},
+    () => { },
     (argv: any) => {
       const result = readAll(
         argv.packageFile,
@@ -255,7 +177,7 @@ const args = yargs
         argv.actionFile,
         argv.drivers
       );
-      updateLocales(result, argv.locales + "/en.json");
+      updateEnLocale(result, argv.locales + "/en.json");
       const lResult = addAllLanguages(result, argv.locales);
       generate(argv.target, formatResult(lResult, argv.minify));
     }

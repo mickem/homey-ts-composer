@@ -1,0 +1,326 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`addLocaleToResult Expanded value should be translated 1`] = `
+Object {
+  "flow": Object {
+    "actions": Array [
+      Object {
+        "args": Array [
+          Object {
+            "name": "type",
+            "title": Object {
+              "en": "the type of bound to set",
+            },
+            "type": "dropdown",
+            "values": Array [
+              Object {
+                "id": "min",
+                "label": Object {
+                  "en": "Minimum",
+                },
+              },
+              Object {
+                "id": "max",
+                "label": Object {
+                  "en": "Maximum",
+                },
+              },
+            ],
+          },
+          Object {
+            "name": "temperature",
+            "title": Object {
+              "en": "$common.temperature",
+              "sv": "Temperatur",
+            },
+            "type": "number",
+          },
+        ],
+        "id": "SetTemperatureBounds",
+        "title": Object {
+          "en": "Set the maximum or minimum temperature bounds",
+          "sv": "Svenska",
+        },
+      },
+      Object {
+        "args": Array [
+          Object {
+            "name": "zone",
+            "title": Object {
+              "en": "$common.zone",
+            },
+            "type": "text",
+          },
+          Object {
+            "name": "mode",
+            "title": Object {
+              "en": "mode",
+            },
+            "type": "dropdown",
+            "values": Array [
+              Object {
+                "id": "disabled",
+                "label": Object {
+                  "en": "Disabled",
+                },
+              },
+              Object {
+                "id": "enabled",
+                "label": Object {
+                  "en": "Enabled",
+                },
+              },
+              Object {
+                "id": "monitored",
+                "label": Object {
+                  "en": "Monitored",
+                },
+              },
+            ],
+          },
+        ],
+        "id": "SetZoneMode",
+        "title": Object {
+          "en": "Set the mode for a given zone",
+        },
+      },
+    ],
+  },
+}
+`;
+
+exports[`addLocaleToResult Expanded value should overwrite existing keys 1`] = `
+Object {
+  "flow": Object {
+    "actions": Array [
+      Object {
+        "args": Array [
+          Object {
+            "name": "type",
+            "title": Object {
+              "en": "the type of bound to set",
+            },
+            "type": "dropdown",
+            "values": Array [
+              Object {
+                "id": "min",
+                "label": Object {
+                  "en": "Minimum",
+                },
+              },
+              Object {
+                "id": "max",
+                "label": Object {
+                  "en": "Maximum",
+                },
+              },
+            ],
+          },
+          Object {
+            "name": "temperature",
+            "title": Object {
+              "en": "Temp",
+            },
+            "type": "number",
+          },
+        ],
+        "id": "SetTemperatureBounds",
+        "title": Object {
+          "en": "English",
+        },
+      },
+      Object {
+        "args": Array [
+          Object {
+            "name": "zone",
+            "title": Object {
+              "en": "$common.zone",
+            },
+            "type": "text",
+          },
+          Object {
+            "name": "mode",
+            "title": Object {
+              "en": "mode",
+            },
+            "type": "dropdown",
+            "values": Array [
+              Object {
+                "id": "disabled",
+                "label": Object {
+                  "en": "Disabled",
+                },
+              },
+              Object {
+                "id": "enabled",
+                "label": Object {
+                  "en": "Enabled",
+                },
+              },
+              Object {
+                "id": "monitored",
+                "label": Object {
+                  "en": "Monitored",
+                },
+              },
+            ],
+          },
+        ],
+        "id": "SetZoneMode",
+        "title": Object {
+          "en": "Set the mode for a given zone",
+        },
+      },
+    ],
+  },
+}
+`;
+
+exports[`addLocaleToResult Regular value should be translated 1`] = `
+Object {
+  "flow": Object {
+    "actions": Array [
+      Object {
+        "args": Array [
+          Object {
+            "name": "type",
+            "title": Object {
+              "en": "the type of bound to set",
+            },
+            "type": "dropdown",
+            "values": Array [
+              Object {
+                "id": "min",
+                "label": Object {
+                  "en": "Minimum",
+                },
+              },
+              Object {
+                "id": "max",
+                "label": Object {
+                  "en": "Maximum",
+                },
+              },
+            ],
+          },
+          Object {
+            "name": "temperature",
+            "title": Object {
+              "en": "$common.temperature",
+              "sv": "Temperatur",
+            },
+            "type": "number",
+          },
+        ],
+        "id": "SetTemperatureBounds",
+        "title": Object {
+          "en": "Set the maximum or minimum temperature bounds",
+          "sv": "Svenska",
+        },
+      },
+      Object {
+        "args": Array [
+          Object {
+            "name": "zone",
+            "title": Object {
+              "en": "$common.zone",
+            },
+            "type": "text",
+          },
+          Object {
+            "name": "mode",
+            "title": Object {
+              "en": "mode",
+            },
+            "type": "dropdown",
+            "values": Array [
+              Object {
+                "id": "disabled",
+                "label": Object {
+                  "en": "Disabled",
+                },
+              },
+              Object {
+                "id": "enabled",
+                "label": Object {
+                  "en": "Enabled",
+                },
+              },
+              Object {
+                "id": "monitored",
+                "label": Object {
+                  "en": "Monitored",
+                },
+              },
+            ],
+          },
+        ],
+        "id": "SetZoneMode",
+        "title": Object {
+          "en": "Set the mode for a given zone",
+        },
+      },
+    ],
+  },
+}
+`;
+
+exports[`updateBaseLocale Common keys should be populated 1`] = `
+Object {
+  "common": Object {
+    "temperature": "TODO",
+    "zone": "TODO",
+  },
+  "drivers": Object {},
+  "flows": Object {
+    "actions": Object {
+      "SetTemperatureBounds": Object {
+        "title": "Set the maximum or minimum temperature bounds",
+        "type": Object {
+          "title": "the type of bound to set",
+        },
+      },
+      "SetZoneMode": Object {
+        "mode": Object {
+          "title": "mode",
+        },
+        "title": "Set the mode for a given zone",
+        "zone": Object {
+          "example": "TODO: Add example at SetZoneMode zone",
+        },
+      },
+    },
+    "triggers": Object {},
+  },
+}
+`;
+
+exports[`updateBaseLocale Common keys should be reused 1`] = `
+Object {
+  "common": Object {
+    "temperature": "The temperature",
+    "zone": "TODO",
+  },
+  "drivers": Object {},
+  "flows": Object {
+    "actions": Object {
+      "SetTemperatureBounds": Object {
+        "title": "Set the maximum or minimum temperature bounds",
+        "type": Object {
+          "title": "the type of bound to set",
+        },
+      },
+      "SetZoneMode": Object {
+        "mode": Object {
+          "title": "mode",
+        },
+        "title": "Set the mode for a given zone",
+        "zone": Object {
+          "example": "TODO: Add example at SetZoneMode zone",
+        },
+      },
+    },
+    "triggers": Object {},
+  },
+}
+`;

@@ -1,15 +1,17 @@
 import * as ts from "typescript";
 import { IJSDoc } from "./JSDocParser";
-import { IAction, IArgument, IToken } from "./Model";
+import { IAction, IArgument, ILString, IToken } from "./Model";
 import {
   cleanTsObj,
   fetchDescriptionFromComment,
   getDropdown,
+  getExample,
   getName,
   getNameOrUnknown,
   hasDropdown,
+  hasExample,
   IName,
-  stripTags
+  stripTags,
 } from "./Utils";
 
 /**
@@ -132,14 +134,18 @@ function makeDropDown(name: string, desc: string): IArgument {
     }))
   };
 }
-function makeString(name: string, type: string, desc: string) {
-  return {
+function makeString(name: string, type: string, desc: string, example: number | ILString | undefined): IArgument {
+  const ret: IArgument = {
     name,
     title: {
       en: desc
     },
     type
   };
+  if (example) {
+    ret.example = example;
+  }
+  return ret;
 }
 interface IArgumentTypeNode {
   name: {
@@ -163,7 +169,8 @@ export function parseArgument(
     if (hasDropdown(desc)) {
       return makeDropDown(name, desc);
     }
-    return makeString(name, type, stripTags(desc));
+    const example = hasExample(desc) ? getExample(desc, type) : undefined;
+    return makeString(name, type, stripTags(desc), example);
   } catch (error) {
     console.error(`Failed to parse ${name}: `, error, cleanTsObj(parameter));
     throw new Error(`Failed to parse ${name}: ${error}`);

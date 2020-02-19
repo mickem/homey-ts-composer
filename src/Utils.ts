@@ -115,3 +115,11 @@ export function stripTags(text: string): string {
 export function parseCode(data: string) {
   return ts.createSourceFile("test", data, ts.ScriptTarget.Latest, true);
 }
+
+
+export function expandKeys(key: string) {
+  if (key.startsWith('$')) {
+    return "lookup";
+  }
+  return key;
+}
