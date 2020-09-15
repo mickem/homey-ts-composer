@@ -58,7 +58,7 @@ export function removeTagText(tag: string, text: string): string {
   if (pos === -1) {
     throw new Error(`Missing tag ${tag} in ${text}`);
   }
-  return (text.substring(0, pos)+text.substring(pos + tag.length)).trim();
+  return (text.substring(0, pos) + text.substring(pos + tag.length)).trim();
 }
 export function hasTag(tag: string, text: string): boolean {
   return text.indexOf(tag) !== -1;
@@ -122,7 +122,12 @@ function findFirst(text: string, keys: string[]): number {
 }
 
 export function stripTags(text: string): string {
-  const pos = findFirst(text, [EXAMPLE_TAG, DROPDOWN_TAG, CLASS_TAG, DEVICE_TAG]);
+  const pos = findFirst(text, [
+    EXAMPLE_TAG,
+    DROPDOWN_TAG,
+    CLASS_TAG,
+    DEVICE_TAG
+  ]);
   if (pos === -1) {
     return text;
   }

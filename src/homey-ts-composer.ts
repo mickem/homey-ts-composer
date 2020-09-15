@@ -80,7 +80,7 @@ function readAll(
   if (!baseline.flow) {
     baseline.flow = {};
   }
-if (triggerFile && existsSync(triggerFile)) {
+  if (triggerFile && existsSync(triggerFile)) {
     baseline.flow.triggers = processTriggers(readFile(triggerFile));
   } else {
     baseline.flow.triggers = [];

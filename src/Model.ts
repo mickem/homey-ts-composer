@@ -71,5 +71,5 @@ export interface IArgument {
   example?: ILString | number;
   title: ILString;
   values?: IDropDownValue[];
-  filter?:string;
+  filter?: string;
 }

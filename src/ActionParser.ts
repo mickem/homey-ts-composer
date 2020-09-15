@@ -21,14 +21,16 @@ import {
  * @param sourceFile the parsed source code
  */
 export function processActions(sourceFile: ts.SourceFile): IAction[] {
-  const interfaces = sourceFile.statements.filter(s => s.kind === ts.SyntaxKind.InterfaceDeclaration);
+  const interfaces = sourceFile.statements.filter(
+    s => s.kind === ts.SyntaxKind.InterfaceDeclaration
+  );
 
   const triggers = [];
   for (const s of sourceFile.statements) {
     if (s.kind === ts.SyntaxKind.InterfaceDeclaration) {
       const cls = s as ts.InterfaceDeclaration;
       const id = getName((cls as any).name);
-      const prefix = interfaces.length > 1 ? `${id}.` : '';
+      const prefix = interfaces.length > 1 ? `${id}.` : "";
       for (const c of cls.members) {
         if (c.kind === ts.SyntaxKind.MethodSignature) {
           const member = parseMethod(prefix, (c as any) as IJSDocMethod);
@@ -43,7 +45,7 @@ export function processActions(sourceFile: ts.SourceFile): IAction[] {
   if (triggers.length > 0) {
     return triggers;
   }
-console.error(`Failed to find any actions`);
+  console.error(`Failed to find any actions`);
   return [];
 }
 
@@ -147,7 +149,7 @@ function makeDevice(name: string, desc: string): IArgument {
     title: {
       en: stripTags(desc)
     },
-    type: "device",
+    type: "device"
   };
 }
 function makeString(
