@@ -91,7 +91,7 @@ describe("Test getExample", () => {
   });
   test("missing tag should throw", () => {
     expect(() => getExample("dont keep", "string")).toThrow(
-      "Missing example tag #sample: in dont keep"
+      "Missing tag #sample: in dont keep"
     );
   });
 });
@@ -113,7 +113,7 @@ describe("Test getDropdown", () => {
   });
   test("missing tag should throw", () => {
     expect(() => getDropdown("dont keep")).toThrow(
-      "Missing example tag #dropdown: in dont keep"
+      "Missing tag #dropdown: in dont keep"
     );
   });
   test("invalid json should throw", () => {

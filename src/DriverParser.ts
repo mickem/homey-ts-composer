@@ -4,9 +4,9 @@ import { IDriver } from "./Model";
 import {
   getClassTag,
   getName,
-  stripTags,
   hasTag,
-  removeTagText
+  removeTagText,
+  stripTags,
 } from "./Utils";
 
 /**

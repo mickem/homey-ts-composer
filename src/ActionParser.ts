@@ -4,16 +4,16 @@ import { IAction, IArgument, ILString, IToken } from "./Model";
 import {
   cleanTsObj,
   fetchDescriptionFromComment,
+  getDevice,
   getDropdown,
   getExample,
   getName,
   getNameOrUnknown,
+  hasDevice,
   hasDropdown,
   hasExample,
   IName,
   stripTags,
-  hasDevice,
-  getDevice
 } from "./Utils";
 
 /**
