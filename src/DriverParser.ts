@@ -1,7 +1,7 @@
 import * as ts from "typescript";
 import { getFirstJSDoc, hasJSDoc } from "./JSDocParser";
 import { IDriver } from "./Model";
-import { getClassTag, getName, stripTags } from "./Utils";
+import { getClassTag, getName, stripTags, hasTag, removeTagText } from "./Utils";
 
 /**
  * Parse all actions from an interface in a .ts source file
@@ -34,9 +34,14 @@ export function processDriver(
                 if (!ret.capabilitiesOptions) {
                   ret.capabilitiesOptions = {};
                 }
+                const hasMaint = hasTag('#maintenanceAction', jsDoc.comment);
+                const desc = hasMaint ? removeTagText('#maintenanceAction', jsDoc.comment): jsDoc.comment;
                 ret.capabilitiesOptions[capability] = {
-                  title: { en: jsDoc.comment }
+                  title: { en: desc }
                 };
+                if (hasMaint) {
+                  ret.capabilitiesOptions[capability].maintenanceAction = true;
+                }
               }
             }
           }
@@ -44,6 +49,10 @@ export function processDriver(
       }
     } else if (s.kind === ts.SyntaxKind.ClassDeclaration) {
       const clsDecl = s as ts.ClassDeclaration;
+      if (!clsDecl || !(clsDecl as any).jsDoc) {
+        console.error(`Failed to find description from class inside ${sourceFile.fileName}`);
+        throw new Error(`Failed to find description from class inside ${sourceFile.fileName}`);
+      }
       const jsDoc = (clsDecl as any).jsDoc[0] as IJSDoc;
       if (!ret.name) {
         ret.name = {

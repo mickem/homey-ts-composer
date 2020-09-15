@@ -77,17 +77,18 @@ function readAll(
   if (pkg.author) {
     baseline.author = pkg.author;
   }
-  if (triggerFile) {
-    if (!baseline.flow) {
-      baseline.flow = {};
-    }
-    baseline.flow.triggers = processTriggers(readFile(triggerFile));
+  if (!baseline.flow) {
+    baseline.flow = {};
   }
-  if (actionFile) {
-    if (!baseline.flow) {
-      baseline.flow = {};
-    }
+if (triggerFile && existsSync(triggerFile)) {
+    baseline.flow.triggers = processTriggers(readFile(triggerFile));
+  } else {
+    baseline.flow.triggers = [];
+  }
+  if (actionFile && existsSync(actionFile)) {
     baseline.flow.actions = processActions(readFile(actionFile));
+  } else {
+    baseline.flow.triggers = [];
   }
   baseline.drivers = readAllDrivers(drivers);
   return baseline;

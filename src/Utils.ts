@@ -3,6 +3,7 @@ import { ILString } from "./Model";
 
 const EXAMPLE_TAG = "#sample:";
 const DROPDOWN_TAG = "#dropdown:";
+const DEVICE_TAG = "#device:";
 const CLASS_TAG = "#class:";
 
 export interface IName {
@@ -45,14 +46,21 @@ export function fetchDescriptionFromComment(text: string) {
   return tmp;
 }
 
-function getTagText(tag: string, text: string): string {
+export function getTagText(tag: string, text: string): string {
   const pos = text.indexOf(tag);
   if (pos === -1) {
-    throw new Error(`Missing example tag ${tag} in ${text}`);
+    throw new Error(`Missing tag ${tag} in ${text}`);
   }
   return text.substring(pos + tag.length).trim();
 }
-function hasTag(tag: string, text: string): boolean {
+export function removeTagText(tag: string, text: string): string {
+  const pos = text.indexOf(tag);
+  if (pos === -1) {
+    throw new Error(`Missing tag ${tag} in ${text}`);
+  }
+  return (text.substring(0, pos)+text.substring(pos + tag.length)).trim();
+}
+export function hasTag(tag: string, text: string): boolean {
   return text.indexOf(tag) !== -1;
 }
 
@@ -71,9 +79,15 @@ export function getExample(text: string, type: string): ILString | number {
 export interface IDropdown {
   [key: string]: string;
 }
+export interface IDevice {
+  filter: string;
+}
 
 export function hasDropdown(text: string): boolean {
   return hasTag(DROPDOWN_TAG, text);
+}
+export function hasDevice(text: string): boolean {
+  return hasTag(DEVICE_TAG, text);
 }
 function parseJsonOrThrow(str: string) {
   try {
@@ -84,6 +98,9 @@ function parseJsonOrThrow(str: string) {
 }
 export function getDropdown(text: string): IDropdown {
   return parseJsonOrThrow(getTagText(DROPDOWN_TAG, text)) as IDropdown;
+}
+export function getDevice(text: string): IDevice {
+  return parseJsonOrThrow(getTagText(DEVICE_TAG, text)) as IDevice;
 }
 export function getClassTag(text: string): string {
   return getTagText(CLASS_TAG, text);
@@ -105,7 +122,7 @@ function findFirst(text: string, keys: string[]): number {
 }
 
 export function stripTags(text: string): string {
-  const pos = findFirst(text, [EXAMPLE_TAG, DROPDOWN_TAG, CLASS_TAG]);
+  const pos = findFirst(text, [EXAMPLE_TAG, DROPDOWN_TAG, CLASS_TAG, DEVICE_TAG]);
   if (pos === -1) {
     return text;
   }

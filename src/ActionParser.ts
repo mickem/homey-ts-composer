@@ -11,7 +11,9 @@ import {
   hasDropdown,
   hasExample,
   IName,
-  stripTags
+  stripTags,
+  hasDevice,
+  getDevice
 } from "./Utils";
 
 /**
@@ -19,36 +21,39 @@ import {
  * @param sourceFile the parsed source code
  */
 export function processActions(sourceFile: ts.SourceFile): IAction[] {
+  const interfaces = sourceFile.statements.filter(s => s.kind === ts.SyntaxKind.InterfaceDeclaration);
+
+  const triggers = [];
   for (const s of sourceFile.statements) {
     if (s.kind === ts.SyntaxKind.InterfaceDeclaration) {
       const cls = s as ts.InterfaceDeclaration;
-      const triggers = [];
       const id = getName((cls as any).name);
+      const prefix = interfaces.length > 1 ? `${id}.` : '';
       for (const c of cls.members) {
         if (c.kind === ts.SyntaxKind.MethodSignature) {
-          const member = parseMethod((c as any) as IJSDocMethod);
+          const member = parseMethod(prefix, (c as any) as IJSDocMethod);
           if (member) {
             triggers.push(member);
           }
         }
       }
       console.log(`Found ${triggers.length} in interface ${id}`);
-      if (triggers.length > 0) {
-        return triggers;
-      }
     }
   }
-  console.error(`Failed to find any actions`);
+  if (triggers.length > 0) {
+    return triggers;
+  }
+console.error(`Failed to find any actions`);
   return [];
 }
 
-function parseMethod(member: IJSDocMethod): IAction {
+function parseMethod(prefix: string, member: IJSDocMethod): IAction {
   try {
     const jsDoc = member.jsDoc[0];
     const functionComment = jsDoc.comment;
     const result: IAction = {
       args: [],
-      id: getName(member.name),
+      id: prefix + getName(member.name),
       title: {
         en: fetchDescriptionFromComment(functionComment)
       }
@@ -134,6 +139,17 @@ function makeDropDown(name: string, desc: string): IArgument {
     }))
   };
 }
+function makeDevice(name: string, desc: string): IArgument {
+  const device = getDevice(desc);
+  return {
+    filter: device.filter,
+    name,
+    title: {
+      en: stripTags(desc)
+    },
+    type: "device",
+  };
+}
 function makeString(
   name: string,
   type: string,
@@ -171,6 +187,9 @@ export function parseArgument(
   const type = getArgType(parameter.type ? parameter.type.kind : -1);
   try {
     const desc = parseDescription(name, jsDoc);
+    if (hasDevice(desc)) {
+      return makeDevice(name, desc);
+    }
     if (hasDropdown(desc)) {
       return makeDropDown(name, desc);
     }

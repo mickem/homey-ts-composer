@@ -49,6 +49,10 @@ function applyValue(
   desc: string
 ) {
   try {
+    if (!realObj[key]) {
+      console.error(`Ignoring missing key ${language} ${desc} (${key})`, realObj);
+      return;
+    }
     if (localeObj && localeObj[key]) {
       realObj[key][language] = localeObj[key];
     } else if (

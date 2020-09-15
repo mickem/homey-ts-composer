@@ -33,6 +33,7 @@ export interface ICapabilitiesOptions {
 }
 export interface ICapabilitiesOption {
   title: ILString;
+  maintenanceAction?: boolean;
 }
 export interface IFlows {
   triggers?: ITrigger[];
@@ -70,4 +71,5 @@ export interface IArgument {
   example?: ILString | number;
   title: ILString;
   values?: IDropDownValue[];
+  filter?:string;
 }
