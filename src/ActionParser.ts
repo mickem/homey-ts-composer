@@ -13,7 +13,7 @@ import {
   hasDropdown,
   hasExample,
   IName,
-  stripTags,
+  stripTags
 } from "./Utils";
 
 /**

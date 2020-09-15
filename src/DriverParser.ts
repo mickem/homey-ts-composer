@@ -6,7 +6,7 @@ import {
   getName,
   hasTag,
   removeTagText,
-  stripTags,
+  stripTags
 } from "./Utils";
 
 /**
